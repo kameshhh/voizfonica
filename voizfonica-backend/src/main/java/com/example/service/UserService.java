@@ -35,11 +35,17 @@ public class UserService {
 			return newUserDao.findByEmail(email);
 //			return ((UserService) newUserDao).findByEmail(email);			
 		}
+		public Users login(Users users) {
+			return newUserDao.findByEmailAndPassword(users.getEmail(),users.getPassword());
+		}
+
 
 		public ContactUs saveContact(ContactUs userData) {
 			contactus.save(userData);
 			return userData;
 		}
+		
+		
 		
 //		public ContactUs saveContact(ContactUs userData) {
 //			newUserDao.save(userData);

@@ -1,9 +1,12 @@
 package com.example.controllers;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +31,7 @@ public class NewUserController {
 	public  ResponseEntity<?> signupUser(@RequestBody Users userData){
 		String emailId=userData.getEmail();
 		if(emailId!=null && !"".equals(emailId)) {
-			Users userobj =userService.findByEmailId(emailId);
+		Users userobj =userService.findByEmailId(emailId);
 			if(userobj!= null) {
 				return (ResponseEntity<?>) ResponseEntity.internalServerError();
 			}
@@ -43,12 +46,21 @@ public class NewUserController {
 	
 	
 	@PostMapping("/userlogin")
-	public  ResponseEntity<?> loginUser(@RequestBody Users userData){
+	public  ResponseEntity<?> loginUser(@RequestBody Users userData ,HttpSession session){
 		System.out.println(userData);
-		Users user=userService.findByEmailId(userData.getEmail());
-		if(user.getPassword() == null || user.getPassword().equals(userData.getPassword()))
-			return ResponseEntity.ok(user);
+//		Users user=userService.findByEmailId(userData.getEmail());
+//		if(user.getPassword() == null || user.getPassword().equals(userData.getPassword())) {
+//			session.setAttribute("user", user);
+//			return ResponseEntity.ok(user);
+//		}else {
+		Users validUser=userService.login(userData);
+		if(validUser!=null) {
+			session.setAttribute("user", validUser);
+			return new ResponseEntity<Users>(validUser,HttpStatus.OK);
+		}else {
+
 		return (ResponseEntity<?>) ResponseEntity.internalServerError();
+		}
 		
 	}
 	
@@ -60,5 +72,15 @@ public class NewUserController {
 		contactObj=userService.saveContact(userData);
 		return ResponseEntity.ok(contactObj);
 	}
+	
+	@DeleteMapping("/logout")
+	public ResponseEntity<?> logout(HttpSession session){
+		Users user=(Users)session.getAttribute("user");
+		if(user!=null)
+			session.removeAttribute("user");
+		session.invalidate();
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
 	
 }
