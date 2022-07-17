@@ -16,7 +16,7 @@ public int getCode() {
 public void setCode(int code) {
 	this.code = code;
 }
-public ErrorClazz(String message, int code) {
+public ErrorClazz(int code, String message) {
 	super();
 	this.message = message;
 	this.code = code;
