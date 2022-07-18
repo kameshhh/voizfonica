@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="complains")
+@Table(name="contactus")
 public class ContactUs {
 	private String name;
 	
